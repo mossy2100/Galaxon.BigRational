@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigRational", "BigRational\BigRational.csproj", "{CFA2E122-A17E-4AFB-9BCA-952E5440C146}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigRationalTests", "BigRationalTests\BigRationalTests.csproj", "{37AAEC3C-FBF3-48F7-9A26-8BD3C092E14A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFA2E122-A17E-4AFB-9BCA-952E5440C146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA2E122-A17E-4AFB-9BCA-952E5440C146}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA2E122-A17E-4AFB-9BCA-952E5440C146}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA2E122-A17E-4AFB-9BCA-952E5440C146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37AAEC3C-FBF3-48F7-9A26-8BD3C092E14A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37AAEC3C-FBF3-48F7-9A26-8BD3C092E14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37AAEC3C-FBF3-48F7-9A26-8BD3C092E14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37AAEC3C-FBF3-48F7-9A26-8BD3C092E14A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
