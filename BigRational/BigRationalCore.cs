@@ -17,7 +17,7 @@ namespace Galaxon.Numerics;
 /// <see href="https://introcs.cs.princeton.edu/java/92symbolic/BigRational.java.html" />
 /// <see href="https://github.com/danm-de/BigRationals" />
 /// </summary>
-public struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<BigRational>,
+public partial struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<BigRational>,
     IUnaryNegationOperators<BigRational, BigRational>,
     IAdditionOperators<BigRational, BigRational, BigRational>,
     ISubtractionOperators<BigRational, BigRational, BigRational>,
@@ -28,19 +28,19 @@ public struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<Big
     #region Constructors
 
     /// <summary>
-    /// BigRationals are not automatically reduced, because Reduce() is slow.
-    /// Either set reduce = true, or call Reduce() as needed.
+    /// Construct a new BigRational object.
+    /// The fraction is automatically reduced to its simplest form.
     /// </summary>
-    /// <param name="num"></param>
-    /// <param name="den"></param>
-    /// <param name="reduce"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public BigRational(BigInteger num, BigInteger den, bool reduce = false)
+    /// <param name="num">The numerator.</param>
+    /// <param name="den">The denominator.</param>
+    /// <exception cref="ArgumentInvalidException">If the denominator is 0.</exception>
+    public BigRational(BigInteger num, BigInteger den)
     {
         // A rational with a 0 denominator is undefined.
         if (den == 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(den), "A rational with a denominator of 0 is undefined.");
+            throw new ArgumentInvalidException(nameof(den),
+                "A rational with a denominator of 0 is undefined.");
         }
 
         // If the numerator is 0, set the denominator to 1 so it matches Zero.
@@ -55,17 +55,25 @@ public struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<Big
             den = -den;
         }
 
-        // Reduce if necessary.
-        // if (reduce)
-        // {
-            (num, den) = Reduce(num, den);
-        // }
+        // Reduce.
+        (num, den) = Reduce(num, den);
 
         Numerator = num;
         Denominator = den;
     }
 
+    /// <summary>
+    /// Constructor for creating a BigRational objects from a single number.
+    /// </summary>
+    /// <param name="num">The numerator.</param>
     public BigRational(BigInteger num) : this(num, 1)
+    {
+    }
+
+    /// <summary>
+    /// Default constructor, returns Zero.
+    /// </summary>
+    public BigRational() : this(0, 1)
     {
     }
 
@@ -88,23 +96,14 @@ public struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<Big
     public bool Equals(BigRational br2)
     {
         // If both numerators are 0 then we don't care what the denominators are.
+        // (Although, they should both be the same anyway, equal to 1.)
         if (Numerator == 0 && br2.Numerator == 0)
         {
             return true;
         }
 
         // See if the numerators and denominators are equal.
-        if (Numerator == br2.Numerator && Denominator == br2.Denominator)
-        {
-            return true;
-        }
-
-        // We could reduce the rationals here and compare numerators and denominators again,
-        // but Reduce() is a little slow and I think comparing double equivalents will do for
-        // most practical purposes.
-
-        // Compare double equivalents.
-        return ((double)this).FuzzyEquals((double)br2);
+        return Numerator == br2.Numerator && Denominator == br2.Denominator;
     }
 
     public override bool Equals(object? obj) =>
@@ -318,7 +317,8 @@ public struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<Big
     /// <summary>
     /// Reduce a rational given as a numerator and denominator.
     /// I've made this version, which doesn't receive or return a BigRational object, so it can be
-    /// called from the constructor.
+    /// called from the constructor, or by consumers of the class. I can imagine use cases where
+    /// people could want to reduce a fraction without necessarily creating a BigRational object.
     /// </summary>
     public static (BigInteger, BigInteger) Reduce(BigInteger num, BigInteger den)
     {
@@ -431,80 +431,6 @@ public struct BigRational : IEquatable<BigRational>, IFormattable, IParsable<Big
         Find(Math.Sqrt((double)br));
 
     #endregion Arithmetic methods
-
-    #region Cast operators
-
-    /// <summary>
-    /// Implicitly cast an int to a rational.
-    /// </summary>
-    public static implicit operator BigRational(int num) =>
-        new (num);
-
-    /// <summary>
-    /// Implicitly cast an BigInteger to a rational.
-    /// </summary>
-    public static implicit operator BigRational(BigInteger num) =>
-        new (num);
-
-    /// <summary>
-    /// Implicitly cast a double to a BigRational.
-    /// This can be done exactly.
-    /// </summary>
-    public static implicit operator BigRational(double x)
-    {
-        // Check for a value we can convert.
-        if (!double.IsFinite(x))
-        {
-            throw new InvalidCastException("Cannot cast NaN or ±∞ to a BigRational.");
-        }
-
-        // Handle zero.
-        if (x == 0)
-        {
-            return Zero;
-        }
-
-        // Get the double's parts.
-        (byte signBit, ushort expBits, ulong fracBits) = x.Disassemble();
-
-        // Convert the fraction bits to a denominator.
-        if (double.IsNormal(x))
-        {
-            // Set the top bit.
-            fracBits |= 1 << 23;
-        }
-        BigInteger num = fracBits;
-
-        // Apply the sign.
-        if (signBit == 1)
-        {
-            num = -num;
-        }
-
-        // Apply the exponent.
-        BigInteger den = 1;
-        short exp = (short)(expBits - XDouble.MaxExp - XDouble.NumFracBits);
-        BigInteger pow = BigInteger.Pow(2, XShort.Abs(exp));
-        if (exp < 0)
-        {
-            den = pow;
-        }
-        else
-        {
-            num *= pow;
-        }
-
-        // Construct and return the new value.
-        return new BigRational(num, den);
-    }
-
-    /// <summary>
-    /// Explicitly cast a rational to a double.
-    /// </summary>
-    public static explicit operator double(BigRational br) =>
-        (double)br.Numerator / (double)br.Denominator;
-
-    #endregion Cast operators
 
     #region Arithmetic operators
 
