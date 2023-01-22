@@ -5,18 +5,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>Galaxon.Numerics.BigRational</AssemblyName>
-        <RootNamespace>Galaxon.Numerics.BigRational</RootNamespace>
+        <RootNamespace>Galaxon.Numerics</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Galaxon.Core.Exceptions">
-        <HintPath>..\..\Core\Exceptions\bin\Debug\net7.0\Galaxon.Core.Exceptions.dll</HintPath>
-      </Reference>
-      <Reference Include="Galaxon.Core.Numbers">
-        <HintPath>..\..\Core\Numbers\bin\Debug\net7.0\Galaxon.Core.Numbers.dll</HintPath>
-      </Reference>
-      <Reference Include="Galaxon.Core.Strings">
-        <HintPath>..\..\Core\Strings\bin\Debug\net7.0\Galaxon.Core.Strings.dll</HintPath>
+      <Reference Include="Galaxon.Core">
+        <HintPath>..\..\Core\Core\bin\Debug\net7.0\Galaxon.Core.dll</HintPath>
       </Reference>
     </ItemGroup>
 

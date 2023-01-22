@@ -9,7 +9,7 @@
 
         <AssemblyName>Galaxon.Numerics.BigRationalTests</AssemblyName>
 
-        <RootNamespace>Galaxon.Numerics.BigRationalTests</RootNamespace>
+        <RootNamespace>Galaxon.Numerics</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
